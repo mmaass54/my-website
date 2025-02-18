@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Авторизация</title>
+
+    <!-- Подключаем шрифт -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      /* Основные стили */
+      body {
+        font-family: "Oswald", sans-serif;
+        background: linear-gradient(to right, #360033, #0b8793); /* Градиент */
+        color: white;
+        text-align: center;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        flex-direction: column;
+      }
+
+      .container {
+        background-color: rgba(255, 255, 255, 0.1);
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        width: 80%;
+        max-width: 400px;
+      }
+
+      h1 {
+        font-size: 28px;
+        font-weight: 700;
+        text-transform: uppercase;
+      }
+
+      input {
+        width: 90%;
+        padding: 10px;
+        margin: 10px 5px;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+      }
+
+      .btn {
+        background-color: #ff0055;
+        font-size: 18px;
+        font-weight: bold;
+        text-transform: uppercase;
+        padding: 12px 25px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: 0.3s;
+        color: white;
+        margin-top: 10px;
+      }
+
+      .btn:hover {
+        background-color: #ff3366;
+        transform: scale(1.05);
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      .error {
+        color: #ffcc00;
+        margin-top: 10px;
+      }
+
+      .link {
+        color: lightblue;
+        cursor: pointer;
+        text-decoration: underline;
+        margin-top: 10px;
+        display: inline-block;
+      }
+
+      .photo {
+        width: 100%;
+        max-width: 250px;
+        margin-top: 20px;
+        border-radius: 10px;
+      }
+
+      .audio-player {
+        margin-top: 20px;
+      }
+
+      .gallery {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 15px;
+        margin-top: 20px;
+      }
+
+      .gallery img {
+        width: 100%;
+        border-radius: 10px;
+        transition: transform 0.3s ease;
+      }
+
+      .gallery img:hover {
+        transform: scale(1.05);
+      }
+
+      /* Стили для дополнительной информации */
+      .info-text {
+        margin-top: 20px;
+        font-size: 18px;
+        line-height: 1.6;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Форма входа -->
+    <div class="container" id="loginForm">
+      <h1>Вход</h1>
+      <input type="text" id="loginUsername" placeholder="Введите логин" />
+      <input type="password" id="loginPassword" placeholder="Введите пароль" />
+      <button class="btn" onclick="checkLogin()">Войти</button>
+      <p class="error hidden" id="loginError">Неверный логин или пароль!</p>
+      <p class="link" onclick="showRegister()">
+        Нет аккаунта? Зарегистрируйтесь
+      </p>
+    </div>
+
+    <!-- Форма регистрации -->
+    <div class="container hidden" id="registerForm">
+      <h1>Регистрация</h1>
+      <input type="text" id="registerUsername" placeholder="Придумайте логин" />
+      <input
+        type="password"
+        id="registerPassword"
+        placeholder="Придумайте пароль"
+      />
+      <button class="btn" onclick="registerUser()">Зарегистрироваться</button>
+      <p class="error hidden" id="registerError">
+        Ошибка: логин уже используется!
+      </p>
+      <p class="link" onclick="showLogin()">Уже есть аккаунт? Войдите</p>
+    </div>
+
+    <!-- Основной контент (изначально скрыт) -->
+    <div class="container hidden" id="mainContent">
+      <h1>Привет, меня зовут Анель!</h1>
+      <p>Мне 16 лет. Я учу немецкий язык и занимаюсь теннисом.</p>
+
+      <!-- Мое фото -->
+      <img src="cat.jpg" alt="Мое фото" class="photo" />
+
+      <!-- Информация обо мне -->
+      <div class="info-text">
+        <p>
+          Я очень люблю изучать языки и хочу стать более уверенной в немецком.
+          Теннис – это моя страсть, и я тренируюсь каждый день, чтобы
+          становиться лучше.
+        </p>
+        <p>
+          Моя цель — продолжать развиваться как в учебе, так и в спорте. Я верю,
+          что упорство и постоянство помогут мне достичь всего, что я хочу.
+        </p>
+      </div>
+
+      <!-- Музыкальный плеер -->
+      <div class="audio-player">
+        <audio controls>
+          <source src="music.mp3" type="audio/mp3" />
+          Ваш браузер не поддерживает аудиофайлы.
+        </audio>
+      </div>
+
+      <!-- Галерея -->
+      <div class="gallery">
+        <img src="ll.jpg" alt="Фото 1" />
+        <img src="lu.jpg" alt="Фото 2" />
+        <img src="dd.jpg" alt="Фото 3" />
+        <!-- Добавьте другие изображения при необходимости -->
+      </div>
+    </div>
+
+    <script>
+      // Объект для хранения пользователей (имитация базы данных)
+      var users = {};
+
+      function showRegister() {
+        document.getElementById("loginForm").classList.add("hidden");
+        document.getElementById("registerForm").classList.remove("hidden");
+      }
+
+      function showLogin() {
+        document.getElementById("registerForm").classList.add("hidden");
+        document.getElementById("loginForm").classList.remove("hidden");
+      }
+
+      function registerUser() {
+        var username = document.getElementById("registerUsername").value;
+        var password = document.getElementById("registerPassword").value;
+        var registerError = document.getElementById("registerError");
+
+        if (users[username]) {
+          registerError.classList.remove("hidden"); // Если логин уже занят
+        } else {
+          users[username] = password;
+          alert("Вы успешно зарегистрированы! Теперь войдите.");
+          showLogin();
+        }
+      }
+
+      function checkLogin() {
+        var username = document.getElementById("loginUsername").value;
+        var password = document.getElementById("loginPassword").value;
+        var loginError = document.getElementById("loginError");
+
+        if (users[username] && users[username] === password) {
+          document.getElementById("loginForm").classList.add("hidden");
+          document.getElementById("mainContent").classList.remove("hidden");
+        } else {
+          loginError.classList.remove("hidden");
+        }
+      }
+    </script>
+  </body>
+</html>
